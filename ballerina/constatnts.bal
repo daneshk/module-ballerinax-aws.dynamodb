@@ -58,180 +58,261 @@ const string HEADER_AUTHORIZATION = "Authorization";
 
 const string GENERATE_SIGNED_REQUEST_HEADERS_FAILED_MSG = "Error occurred while generating signed request headers.";
 
-# Represents the attribute types supported by Amazon DynamoDB.
+# Attribute data types supported by DynamoDB.
 public enum AttributeType {
-    # Represents a string
+    # String data type
     S,
-    # Represents a number
+    # Number data type
     N,
-    # Represents a binary data 
+    # Binary data type
     B
 }
 
-# Represents the key type of an attribute in a DynamoDB table.
-# This enum is used in the `KeySchema` of a `TableSchema` to specify the type of the key attribute.
+# Key type for table and index schemas.
 public enum KeyType {
-    # Represents the partition key
-    HASH, 
-    # Represents the sort key
+    # Partition key (hash key)
+    HASH,
+    # Sort key (range key)
     RANGE
 }
 
-# Represents the types of projections that can be used in a DynamoDB query.
+# Types of attribute projections for secondary indexes.
 public enum ProjectionType {
+    # Only the index and primary keys are projected
     KEYS_ONLY,
-    # All of the item attributes are projected.
+    # All of the item attributes are projected
     ALL,
-    # Only the specified attributes of the queried item(s) are projected.
+    # Index and primary keys plus specified non-key attributes are projected
     INCLUDE,
-    # All of the item attributes are projected except for the specified attributes.
+    # All item attributes are projected except for specified attributes
     EXCLUDE
 }
 
-# Represents the types of server-side encryption supported by DynamoDB.
+# Types of server-side encryption supported by DynamoDB.
 public enum SSEType {
-    AES256, KMS
+    # AES-256 encryption
+    AES256,
+    # AWS Key Management Service encryption
+    KMS
 }
 
-# Represents the stream view type of a DynamoDB table.
+# Information to include in stream records when items are modified.
 public enum StreamViewType {
-    # Returns all of the attributes of the item, as they appear after the UpdateItem operation
-    NEW_IMAGE, 
-    # Returns all of the attributes of the item, as they appeared before the UpdateItem operation
-    OLD_IMAGE, 
-    # Returns both the new and the old images of the item
+    # Item attributes as they appear after modification
+    NEW_IMAGE,
+    # Item attributes as they appeared before modification
+    OLD_IMAGE,
+    # Both new and old item attributes
     NEW_AND_OLD_IMAGES,
-    # Returns only the key attributes of the item, not the other attributes 
+    # Only key attributes of the item
     KEYS_ONLY
 }
 
-# Represents the billing mode of a DynamoDB table.
+# Billing mode for read and write throughput.
 public enum BillingMode {
-    # Represents the provisioned throughput mode for a DynamoDB table
+    # Provisioned throughput mode with specified capacity units
     PROVISIONED,
-    # Represents the pay-per-request billing mode for DynamoDB
+    # Pay-per-request billing for unpredictable workloads
     PAY_PER_REQUEST
 }
 
-# Represents the status of an index.
+# Current status of a global secondary index.
 public enum IndexStatus {
-    # Represents the state of a DynamoDB table being created
-    CREATING, 
-    # Represents the state of an update operation in AWS DynamoDB
-    UPDATING, 
-    # Represents the state of a DynamoDB operation where an item is being deleted
-    DELETING, 
-    # Represents the status of an item in DynamoDB as active
+    # Index is being created
+    CREATING,
+    # Index is being updated
+    UPDATING,
+    # Index is being deleted
+    DELETING,
+    # Index is ready for use
     ACTIVE
 }
 
-# Represents the status of a replica in Amazon DynamoDB.
+# Current status of a table replica in a global table.
 public enum ReplicaStatus {
-    CREATING, CREATION_FAILED,UPDATING, DELETING, ACTIVE, REGION_DISABLED, INACCESSIBLE_ENCRYPTION_CREDENTIALS
+    # Replica is being created
+    CREATING,
+    # Replica creation failed
+    CREATION_FAILED,
+    # Replica is being updated
+    UPDATING,
+    # Replica is being deleted
+    DELETING,
+    # Replica is active and available
+    ACTIVE,
+    # Replica's region is disabled
+    REGION_DISABLED,
+    # Replica's encryption credentials are inaccessible
+    INACCESSIBLE_ENCRYPTION_CREDENTIALS
 }
 
-# Represents the status of a DynamoDB operation.
+# Status of server-side encryption or other table features.
 public enum Status {
-    ENABLING, ENABLED, DISABLING, DISABLED, UPDATING
+    # Feature is being enabled
+    ENABLING,
+    # Feature is enabled
+    ENABLED,
+    # Feature is being disabled
+    DISABLING,
+    # Feature is disabled
+    DISABLED,
+    # Feature is being updated
+    UPDATING
 }
 
-# Represents the status of an AWS DynamoDB table.
+# Current status of a DynamoDB table.
 public enum TableStatus {
-    CREATING, UPDATING, DELETING, ACTIVE, INACCESSIBLE_ENCRYPTION_CREDENTIALS, ARCHIVING, ARCHIVED
+    # Table is being created
+    CREATING,
+    # Table is being updated
+    UPDATING,
+    # Table is being deleted
+    DELETING,
+    # Table is active and available
+    ACTIVE,
+    # Table's encryption credentials are inaccessible
+    INACCESSIBLE_ENCRYPTION_CREDENTIALS,
+    # Table is being archived
+    ARCHIVING,
+    # Table has been archived
+    ARCHIVED
 }
 
-# Represents the comparison operators used in DynamoDB queries.
+# Comparison operators for query and scan filter conditions.
 public enum ComparisonOperator {
     # Equal to
-    EQ, 
+    EQ,
     # Not equal to
-    NE, 
-    # In
-    IN, 
+    NE,
+    # Matches any value in a list
+    IN,
     # Less than or equal to
-    LE, 
+    LE,
     # Less than
     LT,
-    # Greater than or equal to 
-    GE, 
+    # Greater than or equal to
+    GE,
     # Greater than
-    GT, 
-    # Between
+    GT,
+    # Value is between two bounds
     BETWEEN,
-    # Not null 
-    NOT_NULL, 
-    # Null
-    NULL, 
-    # Contains
+    # Attribute exists and is not null
+    NOT_NULL,
+    # Attribute does not exist or is null
+    NULL,
+    # String or set contains a substring or element
     CONTAINS,
-    # Does not contain 
-    NOT_CONTAINS, 
-    # Begins with
+    # String or set does not contain a substring or element
+    NOT_CONTAINS,
+    # String begins with a substring
     BEGINS_WITH
 }
 
-# Represents the conditional operator used in DynamoDB operations.
+# Logical operator to combine multiple conditions in filter or key expressions.
 public enum ConditionalOperator {
-    AND, OR
+    # All conditions must be true
+    AND,
+    # At least one condition must be true
+    OR
 }
 
-# Represents the return consumed capacity mode for DynamoDB operations.
+# Level of detail for provisioned throughput consumption metrics in responses.
 public enum ReturnConsumedCapacity {
-    # Consistent read with indexes
-    INDEXES, 
-    # Consistent read with all the provisioned attributes
-    TOTAL, 
-    # Eventually consistent read
+    # Return consumption for table and indexes
+    INDEXES,
+    # Return total consumption across all table and indexes
+    TOTAL,
+    # Do not return consumption metrics
     NONE
 }
 
-# Represents the enum for the return item collection metrics in AWS DynamoDB.
+# Whether to return item collection size metrics in write operation responses.
 public enum ReturnItemCollectionMetrics {
+    # Return item collection size metrics
     SIZE,
+    # Do not return item collection metrics
     NONE
 }
 
-# Represents the possible return values of a DynamoDB operation.
+# Which item attributes to return in write operation responses.
 public enum ReturnValues {
-    NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW
+    # Return no attributes
+    NONE,
+    # Return all attributes as they were before the operation
+    ALL_OLD,
+    # Return only updated attributes as they were before the operation
+    UPDATED_OLD,
+    # Return all attributes as they are after the operation
+    ALL_NEW,
+    # Return only updated attributes as they are after the operation
+    UPDATED_NEW
 }
 
-# Represents the actions that can be performed on a DynamoDB table.
+# Actions to perform when updating item attributes.
 public enum Action {
-    ADD, PUT, DELETE
+    # Add a value to a number attribute or add an element to a set
+    ADD,
+    # Set or replace an attribute value
+    PUT,
+    # Delete an attribute or remove an element from a set
+    DELETE
 }
 
-# Represents the SELECT operation in DynamoDB.
+# Which attributes to return in query or scan results.
 public enum Select {
-    ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
+    # Return all attributes
+    ALL_ATTRIBUTES,
+    # Return all attributes projected into the index
+    ALL_PROJECTED_ATTRIBUTES,
+    # Return only specified attributes
+    SPECIFIC_ATTRIBUTES,
+    # Return only the count of matching items
+    COUNT
 }
 
-# Represents the status of a stream.
+# Status of a DynamoDB stream.
 public enum StreamStatus {
-    ENABLING, ENABLED, DISABLING, DISABLED
+    # Stream is being enabled
+    ENABLING,
+    # Stream is enabled
+    ENABLED,
+    # Stream is being disabled
+    DISABLING,
+    # Stream is disabled
+    DISABLED
 }
 
-# Represents the event name.
+# Type of modification event in a DynamoDB stream.
 public enum eventName {
-    INSERT, MODIFY, REMOVE
+    # New item was inserted
+    INSERT,
+    # Existing item was modified
+    MODIFY,
+    # Item was removed
+    REMOVE
 }
 
-# Represents the type of shard iterator to be used when reading data from a DynamoDB stream.
+# Starting position for reading from a DynamoDB stream shard.
 public enum ShardIteratorType {
-    # Start reading at the last (untrimmed) stream record, which is the oldest record in the 
-    # shard. In DynamoDB Streams, there is a 24 hour limit on data retention. Stream records 
-    # whose age exceeds this limit are subject to removal (trimming) from the stream
-    TRIM_HORIZON, 
-    # Start reading just after the most recent stream record in the shard, so that you always 
-    # read the most recent data in the shard
-    LATEST, 
-    # Start reading exactly from the position denoted by a specific sequence number
-    AT_SEQUENCE_NUMBER, 
-    # Start reading right after the position denoted by a specific sequence number
+    # Start at the oldest untrimmed record in the shard. Stream records older than 24 hours
+    # are subject to removal (trimming)
+    TRIM_HORIZON,
+    # Start just after the most recent stream record to always read the latest data
+    LATEST,
+    # Start at the exact position of a specific sequence number
+    AT_SEQUENCE_NUMBER,
+    # Start immediately after a specific sequence number
     AFTER_SEQUENCE_NUMBER
 }
 
-# Represents the status of the time to live (TTL) attribute of an item in Amazon DynamoDB.
+# Status of Time to Live feature for automatic item expiration.
 public enum TimeToLiveStatus {
-    ENABLING, DISABLING, ENABLED, DISABLED
+    # TTL is being enabled
+    ENABLING,
+    # TTL is being disabled
+    DISABLING,
+    # TTL is enabled
+    ENABLED,
+    # TTL is disabled
+    DISABLED
 }

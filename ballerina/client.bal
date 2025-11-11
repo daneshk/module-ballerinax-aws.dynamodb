@@ -17,8 +17,9 @@
 import ballerina/http;
 import ballerinax/'client.config;
 
-# The Ballerina AWS DynamoDB connector provides the capability to access AWS Simple Email Service related operations.
-# This connector lets you to to send email messages to your customers.
+# Client for Amazon DynamoDB, enabling table and item management operations.
+# Supports creating, reading, updating, and deleting tables and items, as well as querying, scanning,
+# and batch operations on DynamoDB tables.
 #
 @display {label: "Amazon DynamoDB", iconPath: "icon.png"}
 public isolated client class Client {
@@ -49,12 +50,10 @@ public isolated client class Client {
         self.awsDynamoDb = check new (endpoint, httpClientConfig);
     }
 
-    # Creates a table. The CreateTable operation adds a new table to your account. In an AWS account, table names must be
-    # unique within each Region. That is, you can have two tables with same name if you create the tables in diﬀerent
-    # Regions.
+    # Creates a new table in the AWS account. Table names must be unique within each region.
     #
-    # + tableCreationInput - The request payload to create a table
-    # + return - If success, dynamodb:TableDescription record, else an error
+    # + tableCreationInput - Table creation configuration including name, key schema, and attributes
+    # + return - Table description if successful, or else an error
     remote isolated function createTable(TableCreateInput tableCreationInput) returns TableDescription|error {
         string target = VERSION + DOT + "CreateTable";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -65,10 +64,10 @@ public isolated client class Client {
         return tableDescription.fromJsonWithType();
     }
 
-    # Deletes a table.
+    # Deletes an existing table and all of its items.
     #
-    # + tableName - The name of the table to delete
-    # + return - If success, dynamodb:TableDescription record, else an error
+    # + tableName - Name of the table to delete
+    # + return - Table description if successful, or else an error
     remote isolated function deleteTable(string tableName) returns TableDescription|error {
         string target = VERSION + DOT + "DeleteTable";
         json payload = {
@@ -83,10 +82,10 @@ public isolated client class Client {
         return tableDescription.fromJsonWithType();
     }
 
-    # Describes a table.
+    # Retrieves information about a table including schema, provisioned throughput, and status.
     #
-    # + tableName - The name of the table to delete
-    # + return - If success, dynamodb:TableDescription record, else an error
+    # + tableName - Name of the table to describe
+    # + return - Table description if successful, or else an error
     remote isolated function describeTable(string tableName) returns TableDescription|error {
         string target = VERSION + DOT + "DescribeTable";
         json payload = {
@@ -101,9 +100,9 @@ public isolated client class Client {
         return 'table.fromJsonWithType();
     }
 
-    # Lists all tables.
+    # Retrieves a list of all table names in the current region.
     #
-    # + return - If success, stream<string, error?>, else an error
+    # + return - Stream of table names if successful, or else an error
     remote isolated function listTables() returns stream<string, error?>|error {
         TableStream tableStream = check new TableStream(self.awsDynamoDb, self.awsHost, self.accessKeyId,
             self.secretAccessKey, self.region
@@ -111,10 +110,10 @@ public isolated client class Client {
         return new stream<string, error?>(tableStream);
     }
 
-    # Updates a table.
+    # Updates table settings such as provisioned throughput, global secondary indexes, or streams.
     #
-    # + tableUpdateInput - The request payload to update a table 
-    # + return - If success, dynamodb:TableDescription record, else an error
+    # + tableUpdateInput - Table update configuration
+    # + return - Updated table description if successful, or else an error
     remote isolated function updateTable(TableUpdateInput tableUpdateInput) returns TableDescription|error {
         string target = VERSION + DOT + "UpdateTable";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -125,13 +124,11 @@ public isolated client class Client {
         return tableDescription.fromJsonWithType();
     }
 
-    # Creates a new item, or replaces an old item with a new item. If an item that has the same primary key as the new
-    # item already exists in the speciﬁed table, the new item completely replaces the existing item. You can perform a
-    # conditional put operation (add a new item if one with the speciﬁed primary key doesn't exist), or replace an
-    # existing item if it has certain attribute values.
+    # Creates a new item or replaces an existing item with the same primary key.
+    # Supports conditional operations to prevent overwrites.
     #
-    # + itemCreateInput - The request payload to create an item
-    # + return - If success, dynamodb:ItemDescription record, else an error
+    # + itemCreateInput - Item data and table name
+    # + return - Item operation details if successful, or else an error
     remote isolated function createItem(ItemCreateInput itemCreateInput) returns ItemDescription|error {
         string target = VERSION + DOT + "PutItem";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -141,10 +138,10 @@ public isolated client class Client {
         return response.fromJsonWithType();
     }
 
-    # Gets an item.
+    # Retrieves a single item from a table by its primary key.
     #
-    # + itemGetInput - The request payload to get an item
-    # + return - If success, dynamodb:GetItemOutput record, else an error
+    # + itemGetInput - Primary key and table name, with optional projection expression
+    # + return - Item data if successful, or else an error
     remote isolated function getItem(ItemGetInput itemGetInput) returns ItemGetOutput|error {
         string target = VERSION + DOT + "GetItem";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -154,10 +151,11 @@ public isolated client class Client {
         return response.fromJsonWithType();
     }
 
-    # Deletes an item.
+    # Deletes a single item from a table by its primary key.
+    # Supports conditional deletes to prevent accidental deletions.
     #
-    # + itemDeleteInput - The request payload to delete an item
-    # + return - If success, dynamodb:ItemDescription record, else an error
+    # + itemDeleteInput - Primary key, table name, and optional conditions
+    # + return - Item operation details if successful, or else an error
     remote isolated function deleteItem(ItemDeleteInput itemDeleteInput) returns ItemDescription|error {
         string target = VERSION + DOT + "DeleteItem";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -167,10 +165,11 @@ public isolated client class Client {
         return response;
     }
 
-    # Updates an item
+    # Updates attributes of an existing item, or creates a new item if it doesn't exist.
+    # Supports conditional updates and atomic counters.
     #
-    # + itemUpdateInput - The request payload to update an item
-    # + return - If success, dynamodb:ItemDescription record, else an error
+    # + itemUpdateInput - Primary key, table name, and update expressions
+    # + return - Item operation details if successful, or else an error
     remote isolated function updateItem(ItemUpdateInput itemUpdateInput) returns ItemDescription|error {
         string target = VERSION + DOT + "UpdateItem";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -180,12 +179,11 @@ public isolated client class Client {
         return response.fromJsonWithType();
     }
 
-    # Returns all items with a particular partition key value. You must provide the name of the partition key attribute
-    # and a single value for that attribute. Optionally, you can provide a sort key attribute and use a comparison
-    # operator to reﬁne the search results.
+    # Finds items based on primary key values. Supports filtering, sorting, and pagination.
+    # More efficient than scan for retrieving items with known partition key.
     #
-    # + queryInput - The request payload to query
-    # + return - If success, stream<dynamodb:QueryOutput,error?>, else an error
+    # + queryInput - Query parameters including table name, key conditions, and optional filters
+    # + return - Stream of query results if successful, or else an error
     remote isolated function query(QueryInput queryInput) returns stream<QueryOutput, error?>|error {
 
         QueryStream queryStream = check new QueryStream(self.awsDynamoDb, self.awsHost, self.accessKeyId,
@@ -194,10 +192,11 @@ public isolated client class Client {
         return new stream<QueryOutput, error?>(queryStream);
     }
 
-    # Returns one or more items and item attributes by accessing every item in a table or a secondary index.
+    # Retrieves all items from a table or secondary index by examining every item.
+    # Supports filtering and parallel scanning for large datasets.
     #
-    # + scanInput - The request payload to scan
-    # + return - If success, stream<dynamodb:ScanOutput,error?>, else an error
+    # + scanInput - Scan parameters including table name and optional filter expressions
+    # + return - Stream of scan results if successful, or else an error
     remote isolated function scan(ScanInput scanInput) returns stream<ScanOutput, error?>|error {
 
         ScanStream scanStream = check new ScanStream(self.awsDynamoDb, self.awsHost, self.accessKeyId,
@@ -206,10 +205,11 @@ public isolated client class Client {
         return new stream<ScanOutput, error?>(scanStream);
     }
 
-    # Returns the attributes of one or more items from one or more tables. You identify requested items by primary key.
+    # Retrieves multiple items from one or more tables in a single request.
+    # More efficient than multiple individual get operations.
     #
-    # + batchItemGetInput - The request payload to get items as batch
-    # + return - If success, stream<dynamodb:BatchItem, error?>, else an error
+    # + batchItemGetInput - Batch get parameters with table names and primary keys
+    # + return - Stream of retrieved items if successful, or else an error
     remote isolated function getBatchItems(BatchItemGetInput batchItemGetInput) returns stream<BatchItem, error?>|error {
         ItemsBatchGetStream itemsBatchGetStream = check new ItemsBatchGetStream(self.awsDynamoDb, self.awsHost,
             self.accessKeyId, self.secretAccessKey,
@@ -218,10 +218,11 @@ public isolated client class Client {
         return new stream<BatchItem, error?>(itemsBatchGetStream);
     }
 
-    # Puts or deletes multiple items in one or more tables.
+    # Creates or deletes multiple items across one or more tables in a single request.
+    # More efficient than multiple individual write operations.
     #
-    # + batchItemInsertInput - The request payload to write items as batch
-    # + return - If success, dynamodb:BatchItemInsertOutput record, else an error
+    # + batchItemInsertInput - Batch write parameters with put and delete requests
+    # + return - Batch operation results if successful, or else an error
     remote isolated function writeBatchItems(BatchItemInsertInput batchItemInsertInput) returns BatchItemInsertOutput|error {
         string target = VERSION + DOT + "BatchWriteItem";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -231,10 +232,10 @@ public isolated client class Client {
         return response.fromJsonWithType();
     }
 
-    # Returns the current provisioned-capacity quotas for your AWS account in a Region, both for the Region as a whole
-    # and for any one DynamoDB table that you create there.
+    # Retrieves the current provisioned capacity limits for your AWS account in the region.
+    # Includes both account-level and per-table capacity quotas.
     #
-    # + return - If success, dynamodb:LimitDescription record, else an error
+    # + return - Capacity limit information if successful, or else an error
     remote isolated function describeLimits() returns LimitDescription|error {
         string target = VERSION + DOT + "DescribeLimits";
         json payload = {};
@@ -245,10 +246,10 @@ public isolated client class Client {
         return response.fromJsonWithType();
     }
 
-    # Creates a back up from the given table
+    # Creates an on-demand backup of a table for data protection and archival.
     #
-    # + backupCreateInput - The request payload to backup the table
-    # + return - If success, dynamodb:BackupDetails record, else an error
+    # + backupCreateInput - Backup configuration including table name and backup name
+    # + return - Backup details if successful, or else an error
     remote isolated function createBackup(BackupCreateInput backupCreateInput) returns BackupDetails|error {
         string target = VERSION + DOT + "CreateBackup";
         map<string> signedRequestHeaders = check getSignedRequestHeaders(self.awsHost, self.accessKeyId,
@@ -259,10 +260,10 @@ public isolated client class Client {
         return backUpDetails.fromJsonWithType();
     }
 
-    # Deletes an existing backup of a table.
+    # Deletes an existing backup. The backup can no longer be used for restoration after deletion.
     #
-    # + backupArn - The backupArn of the table that needs to be deleted
-    # + return - If success, dynamodb:BackupDescription record, else an error
+    # + backupArn - Amazon Resource Name of the backup to delete
+    # + return - Backup description if successful, or else an error
     remote isolated function deleteBackup(string backupArn) returns BackupDescription|error {
         string target = VERSION + DOT + "DeleteBackup";
         json payload = {
@@ -276,10 +277,10 @@ public isolated client class Client {
         return backUpDetails.fromJsonWithType();
     }
 
-    # The description of the Time to Live (TTL) status on the specified table.
+    # Retrieves Time to Live settings for automatic item expiration on the table.
     #
-    # + tableName - Table name 
-    # + return - If success, dynamodb:TTLDescription record, else an error
+    # + tableName - Name of the table
+    # + return - TTL configuration details if successful, or else an error
     remote isolated function getTTL(string tableName) returns TTLDescription|error {
         string target = VERSION + DOT + "DescribeTimeToLive";
         json payload = {
