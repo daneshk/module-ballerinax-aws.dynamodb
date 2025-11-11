@@ -59,260 +59,193 @@ const string HEADER_AUTHORIZATION = "Authorization";
 const string GENERATE_SIGNED_REQUEST_HEADERS_FAILED_MSG = "Error occurred while generating signed request headers.";
 
 # Attribute data types supported by DynamoDB.
+# S - String data type
+# N - Number data type
+# B - Binary data type
 public enum AttributeType {
-    # String data type
-    S,
-    # Number data type
-    N,
-    # Binary data type
-    B
+    S, N, B
 }
 
 # Key type for table and index schemas.
+# HASH - Partition key
+# RANGE - Sort key
 public enum KeyType {
-    # Partition key (hash key)
-    HASH,
-    # Sort key (range key)
-    RANGE
+    HASH, RANGE
 }
 
 # Types of attribute projections for secondary indexes.
+# KEYS_ONLY - Only the index and primary keys are projected
+# ALL - All of the item attributes are projected
+# INCLUDE - Index and primary keys plus specified non-key attributes are projected
+# EXCLUDE - All item attributes are projected except for specified attributes
 public enum ProjectionType {
-    # Only the index and primary keys are projected
-    KEYS_ONLY,
-    # All of the item attributes are projected
-    ALL,
-    # Index and primary keys plus specified non-key attributes are projected
-    INCLUDE,
-    # All item attributes are projected except for specified attributes
-    EXCLUDE
+    KEYS_ONLY, ALL, INCLUDE, EXCLUDE
 }
 
 # Types of server-side encryption supported by DynamoDB.
+# AES256 - AES-256 encryption
+# KMS - AWS Key Management Service encryption
 public enum SSEType {
-    # AES-256 encryption
-    AES256,
-    # AWS Key Management Service encryption
-    KMS
+    AES256, KMS
 }
 
 # Information to include in stream records when items are modified.
+# NEW_IMAGE - Item attributes as they appear after modification
+# OLD_IMAGE - Item attributes as they appeared before modification
+# NEW_AND_OLD_IMAGES - Both new and old item attributes
+# KEYS_ONLY - Only key attributes of the item
 public enum StreamViewType {
-    # Item attributes as they appear after modification
-    NEW_IMAGE,
-    # Item attributes as they appeared before modification
-    OLD_IMAGE,
-    # Both new and old item attributes
-    NEW_AND_OLD_IMAGES,
-    # Only key attributes of the item
-    KEYS_ONLY
+    NEW_IMAGE, OLD_IMAGE, NEW_AND_OLD_IMAGES, KEYS_ONLY
 }
 
 # Billing mode for read and write throughput.
+# PROVISIONED - Provisioned throughput mode with specified capacity units
+# PAY_PER_REQUEST - Pay-per-request billing for unpredictable workloads
 public enum BillingMode {
-    # Provisioned throughput mode with specified capacity units
-    PROVISIONED,
-    # Pay-per-request billing for unpredictable workloads
-    PAY_PER_REQUEST
+    PROVISIONED, PAY_PER_REQUEST
 }
 
 # Current status of a global secondary index.
+# CREATING - Index is being created
+# UPDATING - Index is being updated
+# DELETING - Index is being deleted
+# ACTIVE - Index is ready for use
 public enum IndexStatus {
-    # Index is being created
-    CREATING,
-    # Index is being updated
-    UPDATING,
-    # Index is being deleted
-    DELETING,
-    # Index is ready for use
-    ACTIVE
+    CREATING, UPDATING, DELETING, ACTIVE
 }
 
 # Current status of a table replica in a global table.
+# CREATING - Replica is being created
+# CREATION_FAILED - Replica creation failed
+# UPDATING - Replica is being updated
+# DELETING - Replica is being deleted
+# ACTIVE - Replica is active and available
+# REGION_DISABLED - Replica's region is disabled
+# INACCESSIBLE_ENCRYPTION_CREDENTIALS - Replica's encryption credentials are inaccessible
 public enum ReplicaStatus {
-    # Replica is being created
-    CREATING,
-    # Replica creation failed
-    CREATION_FAILED,
-    # Replica is being updated
-    UPDATING,
-    # Replica is being deleted
-    DELETING,
-    # Replica is active and available
-    ACTIVE,
-    # Replica's region is disabled
-    REGION_DISABLED,
-    # Replica's encryption credentials are inaccessible
-    INACCESSIBLE_ENCRYPTION_CREDENTIALS
+    CREATING, CREATION_FAILED, UPDATING, DELETING, ACTIVE, REGION_DISABLED, INACCESSIBLE_ENCRYPTION_CREDENTIALS
 }
 
 # Status of server-side encryption or other table features.
+# ENABLING - Feature is being enabled
+# ENABLED - Feature is enabled
+# DISABLING - Feature is being disabled
+# DISABLED - Feature is disabled
+# UPDATING - Feature is being updated
 public enum Status {
-    # Feature is being enabled
-    ENABLING,
-    # Feature is enabled
-    ENABLED,
-    # Feature is being disabled
-    DISABLING,
-    # Feature is disabled
-    DISABLED,
-    # Feature is being updated
-    UPDATING
+    ENABLING, ENABLED, DISABLING, DISABLED, UPDATING
 }
 
 # Current status of a DynamoDB table.
+# CREATING - Table is being created
+# UPDATING - Table is being updated
+# DELETING - Table is being deleted
+# ACTIVE - Table is active and available
+# INACCESSIBLE_ENCRYPTION_CREDENTIALS - Table's encryption credentials are inaccessible
+# ARCHIVING - Table is being archived
+# ARCHIVED - Table has been archived
 public enum TableStatus {
-    # Table is being created
-    CREATING,
-    # Table is being updated
-    UPDATING,
-    # Table is being deleted
-    DELETING,
-    # Table is active and available
-    ACTIVE,
-    # Table's encryption credentials are inaccessible
-    INACCESSIBLE_ENCRYPTION_CREDENTIALS,
-    # Table is being archived
-    ARCHIVING,
-    # Table has been archived
-    ARCHIVED
+    CREATING, UPDATING, DELETING, ACTIVE, INACCESSIBLE_ENCRYPTION_CREDENTIALS, ARCHIVING, ARCHIVED
 }
 
 # Comparison operators for query and scan filter conditions.
+# EQ - Equal to
+# NE - Not equal to
+# IN - Matches any value in a list
+# LE - Less than or equal to
+# LT - Less than
+# GE - Greater than or equal to
+# GT - Greater than
+# BETWEEN - Value is between two bounds
+# NOT_NULL - Attribute exists and is not null
+# NULL - Attribute does not exist or is null
+# CONTAINS - String or set contains a substring or element
+# NOT_CONTAINS - String or set does not contain a substring or element
+# BEGINS_WITH - String begins with a substring
 public enum ComparisonOperator {
-    # Equal to
-    EQ,
-    # Not equal to
-    NE,
-    # Matches any value in a list
-    IN,
-    # Less than or equal to
-    LE,
-    # Less than
-    LT,
-    # Greater than or equal to
-    GE,
-    # Greater than
-    GT,
-    # Value is between two bounds
-    BETWEEN,
-    # Attribute exists and is not null
-    NOT_NULL,
-    # Attribute does not exist or is null
-    NULL,
-    # String or set contains a substring or element
-    CONTAINS,
-    # String or set does not contain a substring or element
-    NOT_CONTAINS,
-    # String begins with a substring
-    BEGINS_WITH
+    EQ, NE, IN, LE, LT, GE, GT, BETWEEN, NOT_NULL, NULL, CONTAINS, NOT_CONTAINS, BEGINS_WITH
 }
 
 # Logical operator to combine multiple conditions in filter or key expressions.
+# AND - All conditions must be true
+# OR - At least one condition must be true
 public enum ConditionalOperator {
-    # All conditions must be true
-    AND,
-    # At least one condition must be true
-    OR
+    AND, OR
 }
 
 # Level of detail for provisioned throughput consumption metrics in responses.
+# INDEXES - Return consumption for table and indexes
+# TOTAL - Return total consumption across all table and indexes
+# NONE - Do not return consumption metrics
 public enum ReturnConsumedCapacity {
-    # Return consumption for table and indexes
-    INDEXES,
-    # Return total consumption across all table and indexes
-    TOTAL,
-    # Do not return consumption metrics
-    NONE
+    INDEXES, TOTAL, NONE
 }
 
 # Whether to return item collection size metrics in write operation responses.
+# SIZE - Return item collection size metrics
+# NONE - Do not return item collection metrics
 public enum ReturnItemCollectionMetrics {
-    # Return item collection size metrics
-    SIZE,
-    # Do not return item collection metrics
-    NONE
+    SIZE, NONE
 }
 
 # Which item attributes to return in write operation responses.
+# NONE - Return no attributes
+# ALL_OLD - Return all attributes as they were before the operation
+# UPDATED_OLD - Return only updated attributes as they were before the operation
+# ALL_NEW - Return all attributes as they are after the operation
+# UPDATED_NEW - Return only updated attributes as they are after the operation
 public enum ReturnValues {
-    # Return no attributes
-    NONE,
-    # Return all attributes as they were before the operation
-    ALL_OLD,
-    # Return only updated attributes as they were before the operation
-    UPDATED_OLD,
-    # Return all attributes as they are after the operation
-    ALL_NEW,
-    # Return only updated attributes as they are after the operation
-    UPDATED_NEW
+    NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW
 }
 
 # Actions to perform when updating item attributes.
+# ADD - Add a value to a number attribute or add an element to a set
+# PUT - Set or replace an attribute value
+# DELETE - Delete an attribute or remove an element from a set
 public enum Action {
-    # Add a value to a number attribute or add an element to a set
-    ADD,
-    # Set or replace an attribute value
-    PUT,
-    # Delete an attribute or remove an element from a set
-    DELETE
+    ADD, PUT, DELETE
 }
 
 # Which attributes to return in query or scan results.
+# ALL_ATTRIBUTES - Return all attributes
+# ALL_PROJECTED_ATTRIBUTES - Return all attributes projected into the index
+# SPECIFIC_ATTRIBUTES - Return only specified attributes
+# COUNT - Return only the count of matching items
 public enum Select {
-    # Return all attributes
-    ALL_ATTRIBUTES,
-    # Return all attributes projected into the index
-    ALL_PROJECTED_ATTRIBUTES,
-    # Return only specified attributes
-    SPECIFIC_ATTRIBUTES,
-    # Return only the count of matching items
-    COUNT
+    ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
 }
 
 # Status of a DynamoDB stream.
+# ENABLING - Stream is being enabled
+# ENABLED - Stream is enabled
+# DISABLING - Stream is being disabled
+# DISABLED - Stream is disabled
 public enum StreamStatus {
-    # Stream is being enabled
-    ENABLING,
-    # Stream is enabled
-    ENABLED,
-    # Stream is being disabled
-    DISABLING,
-    # Stream is disabled
-    DISABLED
+    ENABLING, ENABLED, DISABLING, DISABLED
 }
 
 # Type of modification event in a DynamoDB stream.
+# INSERT - New item was inserted
+# MODIFY - Existing item was modified
+# REMOVE - Item was removed
 public enum eventName {
-    # New item was inserted
-    INSERT,
-    # Existing item was modified
-    MODIFY,
-    # Item was removed
-    REMOVE
+    INSERT, MODIFY, REMOVE
 }
 
 # Starting position for reading from a DynamoDB stream shard.
+# TRIM_HORIZON - Start at the oldest untrimmed record (stream records older than 24 hours are subject to removal)
+# LATEST - Start just after the most recent stream record to always read the latest data
+# AT_SEQUENCE_NUMBER - Start at the exact position of a specific sequence number
+# AFTER_SEQUENCE_NUMBER - Start immediately after a specific sequence number
 public enum ShardIteratorType {
-    # Start at the oldest untrimmed record in the shard. Stream records older than 24 hours
-    # are subject to removal (trimming)
-    TRIM_HORIZON,
-    # Start just after the most recent stream record to always read the latest data
-    LATEST,
-    # Start at the exact position of a specific sequence number
-    AT_SEQUENCE_NUMBER,
-    # Start immediately after a specific sequence number
-    AFTER_SEQUENCE_NUMBER
+    TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER
 }
 
 # Status of Time to Live feature for automatic item expiration.
+# ENABLING - TTL is being enabled
+# DISABLING - TTL is being disabled
+# ENABLED - TTL is enabled
+# DISABLED - TTL is disabled
 public enum TimeToLiveStatus {
-    # TTL is being enabled
-    ENABLING,
-    # TTL is being disabled
-    DISABLING,
-    # TTL is enabled
-    ENABLED,
-    # TTL is disabled
-    DISABLED
+    ENABLING, DISABLING, ENABLED, DISABLED
 }
